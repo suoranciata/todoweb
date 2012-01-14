@@ -1,0 +1,125 @@
+!!!5
+html
+	head
+		title todolist2
+		style
+			* {
+				font-family: sans-serif;
+			}
+			.header {
+				text-align: right
+			}
+			.todos {
+				width: 100%;
+			}
+			.todos tbody tr td {
+				background-color: #f0f0f0;
+			}
+			.todos tbody tr td a {
+				border: 1px solid white;
+				padding: 2px;
+				color: blue;
+				border-radius: 4px;
+				text-decoration: none;
+			}
+			.todos tbody tr td a:hover {
+				background-color: white;
+			}
+			.todos tbody tr td a:active {
+				color: red;
+			}
+		script(type='text/javascript')
+			var edit = function(elem, todo_id) {
+				elem.onclick = null
+				var value = elem.childNodes[0].nodeValue
+				elem.removeChild(elem.childNodes[0])
+				var input = document.createElement('input')
+				input.value = value
+				input.name = 'todo'
+				input.style.width = '100%'
+				var hidden = document.createElement('input')
+				hidden.type = 'hidden'
+				hidden.name = 'id'
+				hidden.value = todo_id
+				var form = document.createElement('form')
+				form.action = '/edit'
+				form.method = 'post'
+				form.appendChild(input)
+				form.appendChild(hidden)
+				elem.appendChild(form)
+			}
+	body
+		.header
+			.login
+				- if (req.session.username)
+					b #{req.session.username}
+					| &nbsp;
+					a(href='/logout') logout
+				- else
+					form(action='/login', method='post')
+						input(name='username')
+						input(name='password',type='password')
+						input(type='submit', value='login')
+		.content
+			table.todos
+				thead
+					tr
+						th id
+						th autore
+						th
+							| creato /
+							br
+							| modificato
+						th todo
+						th
+							| in carico a /
+							br
+							| completato da
+						th stato
+						th funzioni
+				tbody
+					- if (req.session.username)
+						tr
+							td(colspan='7')
+								form(action='/new',method='post')
+									input(name='todo', style='width: 88%')
+									| &nbsp;
+									input(type='submit',value='inserisci', style='width: 9%')
+					- todos.forEach(function(todo) {
+						tr
+							td= todo.id
+							td= todo.autore
+							td= todo.epochFormatted
+							- if (req.session.username)
+								td(style='width: 50%', onclick='edit(this, '+todo.id+')')= todo.descr
+							- else
+								td(style='width: 50%')= todo.descr
+							td
+								- if (todo.in_carico)
+									| #{todo.in_carico}
+								- else
+									| &nbsp;
+							- if(todo.stato === 'todo')
+								td(style='background-color: red') #{todo.stato}
+							- else if(todo.stato === 'working')
+								td(style='background-color: yellow') #{todo.stato}
+							- else if(todo.stato === 'done')
+								td(style='background-color: green') #{todo.stato}
+							td
+								- if (req.session.username)
+									- if (todo.stato === 'todo')
+										a(href='/workOn/' + todo.id) prendi
+									- else if (todo.stato === 'working' && todo.in_carico === req.session.username)
+										a(href='/leave/'+todo.id) rilascia
+										br
+										a(href='/end/'+todo.id) completa
+									- else if (todo.stato === 'done')
+										a(href='/reopen/'+todo.id) riapri
+					- })
+			| link utili
+			br
+			a(href='http://62.75.186.230:8080/FdTViewer/Messages') forum
+			br
+			a(href='http://ravanator.acmetoy.com/src') sorci (web)
+			br
+			| git clone ssh://anongit@ravanator.acmetoy.com/src/FdtDueZero.git
