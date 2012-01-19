@@ -33,8 +33,9 @@ html
 				elem.onclick = null
 				var value = elem.childNodes[0].nodeValue
 				elem.removeChild(elem.childNodes[0])
-				var input = document.createElement('input')
+				var input = document.createElement('textarea')
 				input.value = value
+				input.rows = 5
 				input.name = 'todo'
 				input.style.width = '100%'
 				var hidden = document.createElement('input')

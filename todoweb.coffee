@@ -71,4 +71,4 @@ server = connect connect.responseTime(),
 				 router,
 				 connect.errorHandler({showStack : yes, dump : yes})
 
-server.listen 3000, '62.75.209.179'
+server.listen 3000
