@@ -42,11 +42,14 @@ html
 				hidden.type = 'hidden'
 				hidden.name = 'id'
 				hidden.value = todo_id
+				var submit = document.createElement('input')
+				submit.type = 'submit'
 				var form = document.createElement('form')
 				form.action = '/edit'
 				form.method = 'post'
 				form.appendChild(input)
 				form.appendChild(hidden)
+				form.appendChild(submit)
 				elem.appendChild(form)
 			}
 	body
